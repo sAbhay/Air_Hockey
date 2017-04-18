@@ -47,7 +47,6 @@ void Player::update()
 {
     move();
     checkBoundaries();
-    display();
 }
 
 void Player::checkBoundaries()

@@ -31,9 +31,13 @@ class ofApp : public ofBaseApp{
         void client();
 
     private:
-        Puck p;
-        Player player;
+        Puck puck;
+//        Player player;
+        Player pl[2];
     
         ofxUDPManager s;
-        ofxUDPManager c;
+//        ofxUDPManager c;
+//        int ID;
+    
+//        ofVec2f p;
 };

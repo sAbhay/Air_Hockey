@@ -21,15 +21,16 @@ class Player
         int m;
         int n;
     
+        void checkBoundaries();
+        void move();
+    
     public:
         Player();
         Player(int number);
         ~Player();
     
         void display();
-        void move();
         void update();
-        void checkBoundaries();
     
         void setPos(ofVec2f p) {pos = p;}
         ofVec2f getPos() {return pos;}

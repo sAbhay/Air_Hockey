@@ -23,14 +23,16 @@ class Puck
         float restitution;
         float friction;
     
+        void move();
+        void checkBoundaries();
+    
     public:
         Puck();
         ~Puck();
     
         void display();
-        void move();
+    
         void update();
-        void checkBoundaries();
     
         void checkCollision(Player& p);
     

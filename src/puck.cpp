@@ -41,7 +41,6 @@ void Puck::update()
 {
     checkBoundaries();
     move();
-    display();
 }
 
 void Puck::checkBoundaries()
