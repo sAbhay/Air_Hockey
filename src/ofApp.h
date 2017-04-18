@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "puck.hpp"
 #include "player.hpp"
+#include "ofxNetwork.h"
 
 class ofApp : public ofBaseApp{
 
@@ -22,9 +23,17 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		void background();
+		
+        void background();
+        void serverSetup();
+        void server();
+        void clientSetup();
+        void client();
 
     private:
         Puck p;
         Player player;
+    
+        ofxUDPManager s;
+        ofxUDPManager c;
 };

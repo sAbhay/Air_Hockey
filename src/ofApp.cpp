@@ -17,13 +17,9 @@ void ofApp::update()
     v.x = ofGetMouseX() - ofGetPreviousMouseX();
     v.y = ofGetMouseY() - ofGetPreviousMouseY();
     
-//    v.normalize();
-//    v *= 5;
-    
     player.setVel(v);
-
-
-    player.checkCollision(p);
+    
+    p.checkCollision(player);
 }
 
 //--------------------------------------------------------------

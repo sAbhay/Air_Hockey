@@ -14,6 +14,8 @@ Puck::Puck()
     vel = ofVec2f(0, 0);
     r = 30;
     m = 1;
+    friction = 0.99;
+    restitution = 0.9;
 }
 
 Puck::~Puck()
@@ -37,6 +39,7 @@ void Puck::move()
 
 void Puck::update()
 {
+    checkBoundaries();
     move();
     display();
 }
@@ -61,9 +64,26 @@ void Puck::checkBoundaries()
         vel.y *= -restitution;
     }
     
-    if(pos.y >= ofGetWidth() - r)
+    if(pos.y >= ofGetHeight() - r)
     {
-        pos.y = ofGetWidth() - r;
+        pos.y = ofGetHeight() - r;
         vel.y *= -restitution;
+    }
+}
+
+void Puck::checkCollision(Player& p)
+{
+    ofVec3f bP = p.getPos();
+    ofVec3f bV = p.getVel();
+    float bR = p.getRad();
+    float d = ofDist(pos.x, pos.y, bP.x, bP.y);
+    
+    if(d < r + bR)
+    {
+        vel = pos - bP;
+        
+        vel.normalize();
+        
+        vel *= bV.length();
     }
 }

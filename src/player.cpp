@@ -21,7 +21,7 @@ Player::Player(int number)
 {
     pos = ofVec2f(number * ofGetWidth()/2 + ofGetWidth()/4, ofGetHeight()/2);
     vel = ofVec2f(0, 0);
-    r = 40;
+    r = 45;
     m = 2;
     n = number;
 }
@@ -48,23 +48,6 @@ void Player::update()
     move();
     checkBoundaries();
     display();
-}
-
-void Player::checkCollision(Puck& p)
-{
-    ofVec2f pPos = p.getPos();
-    ofVec2f pVel = p.getVel();
-
-    if(ofDist(pos.x, pos.y, pPos.x, pPos.y) < r + p.getRad())
-    {
-        ofVec2f temp = pPos - pos;
-        
-        temp.normalize();
-        
-        temp *= vel.length();
-        
-        p.setVel(temp);
-    }
 }
 
 void Player::checkBoundaries()

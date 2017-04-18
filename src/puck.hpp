@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "ofMain.h"
+#include "player.hpp"
 
 class Puck
 {
@@ -31,6 +32,8 @@ class Puck
         void update();
         void checkBoundaries();
     
+        void checkCollision(Player& p);
+    
         void setPos(ofVec2f p) {pos = p;}
         ofVec2f getPos() {return pos;}
     
@@ -38,6 +41,7 @@ class Puck
         ofVec2f getVel() {return vel;}
     
         int getRad() {return r;}
+        int getMass() {return m;}
 };
 
 #endif /* puck_hpp */
