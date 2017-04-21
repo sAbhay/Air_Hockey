@@ -151,10 +151,11 @@ void ofApp::server()
 
     s.Send(c.c_str(), c.length());
     
-    char* received;
-    s.Receive(received, 50);
+    char received[100];
+    s.Receive(received, 100);
     
     string data(received);
+    
     string data1;
     data1 = data.substr(data.find("1:"), data.find("2:"));
     data.erase(data.find("1:") - 2, data.find("2:"));
@@ -216,8 +217,8 @@ void ofApp::server()
 
 void ofApp::client()
 {
-    char* received;
-    c.Receive(received, 4);
+    char received[100];
+    c.Receive(received, 100);
     
     string data(received);
     
