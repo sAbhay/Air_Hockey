@@ -152,60 +152,64 @@ void ofApp::server()
     s.Send(c.c_str(), c.length());
     
     char received[100];
-    s.Receive(received, 100);
+    int x = s.Receive(received, 100);
     
-    string data(received);
-    
-    string data1;
-    data1 = data.substr(data.find("1:"), data.find("2:"));
-    data.erase(data.find("1:") - 2, data.find("2:"));
-    
-    string delimiter;
-    delimiter = " ";
-    
-    int pos[2];
-    std::string token[2];
-    int tokenNumber[2];
-    float a[2][4];
-    while ((pos[0] = data.find(delimiter)) != std::string::npos)
+    if(x != 0)
     {
-        token[0] = data.substr(0, pos[0]);
-        
-        if(token[0] != "1:" || token[0] != "2:")
-        {
-            a[0][tokenNumber[0]] = std::stoi(token[0]);
-            tokenNumber[0]++;
-        }
-        
-        data.erase(0, pos[0] + delimiter.length());
-    }
+        string data(received);
     
-    while ((pos[1] = data1.find(delimiter)) != std::string::npos)
-    {
-        token[1] = data.substr(0, pos[1]);
-        
-        if(token[1] != "1:" || token[1] != "2:")
+        string data1;
+        data1 = data.substr(data.find("1:"), data.find("2:"));
+        data.erase(data.find("1:") - 2, data.find("2:"));
+    
+        string delimiter;
+        delimiter = " ";
+    
+        int pos[2];
+        std::string token[2];
+        int tokenNumber[2];
+        float a[2][4];
+    
+        while ((pos[0] = data.find(delimiter)) != std::string::npos)
         {
-            a[1][tokenNumber[1]] = std::stoi(token[1]);
-            tokenNumber[1]++;
-        }
+            token[0] = data.substr(0, pos[0]);
         
-        data.erase(0, pos[1] + delimiter.length());
-    }
+            if(token[0] != "1:" || token[0] != "2:")
+            {
+                a[0][tokenNumber[0]] = std::stoi(token[0]);
+                tokenNumber[0]++;
+            }
+        
+            data.erase(0, pos[0] + delimiter.length());
+        }
+    
+        while ((pos[1] = data1.find(delimiter)) != std::string::npos)
+        {
+            token[1] = data.substr(0, pos[1]);
+        
+            if(token[1] != "1:" || token[1] != "2:")
+            {
+                a[1][tokenNumber[1]] = std::stoi(token[1]);
+                tokenNumber[1]++;
+            }
+        
+            data.erase(0, pos[1] + delimiter.length());
+        }
 
     
-    ofVec2f attributes[4];
-    attributes[0] = ofVec2f(a[0][0], a[0][1]);
-    attributes[1] = ofVec2f(a[0][2], a[0][3]);
+        ofVec2f attributes[4];
+        attributes[0] = ofVec2f(a[0][0], a[0][1]);
+        attributes[1] = ofVec2f(a[0][2], a[0][3]);
     
-    pl[1].setPos(attributes[0]);
-    pl[1].setVel(attributes[1]);
+        pl[1].setPos(attributes[0]);
+        pl[1].setVel(attributes[1]);
     
-    attributes[2] = ofVec2f(a[1][0], a[1][1]);
-    attributes[3] = ofVec2f(a[1][2], a[1][3]);
+        attributes[2] = ofVec2f(a[1][0], a[1][1]);
+        attributes[3] = ofVec2f(a[1][2], a[1][3]);
     
-    pl[0].setPos(attributes[2]);
-    pl[0].setVel(attributes[3]);
+        pl[0].setPos(attributes[2]);
+        pl[0].setVel(attributes[3]);
+    }
 }
 
 /*void ofApp::clientSetup()
@@ -218,53 +222,56 @@ void ofApp::server()
 void ofApp::client()
 {
     char received[100];
-    c.Receive(received, 100);
+    int x = c.Receive(received, 100);
     
-    string data(received);
-    
-    string delimiter = ", ";
-    
-    int pos = 0;
-    std::string token;
-    int tokenNumber = 0;
-    float a[2];
-    
-    while ((pos = data.find(delimiter)) != std::string::npos)
+    if(x != 0)
     {
-        token = data.substr(0, pos);
-        a[tokenNumber] = std::stoi(token);
-        tokenNumber++;
-        data.erase(0, pos + delimiter.length());
-    }
+        string data(received);
     
-    p = ofVec2f(a[0], a[1]);
+        string delimiter = ", ";
     
-    ofVec2f pPos = player.getPos();
-    ofVec2f pVel = player.getVel();
+        int pos = 0;
+        std::string token;
+        int tokenNumber = 0;
+        float a[2];
     
-    std::ostringstream k;
-    k << pPos.x;
-    std::string x(k.str());
+        while ((pos = data.find(delimiter)) != std::string::npos)
+        {
+            token = data.substr(0, pos);
+            a[tokenNumber] = std::stoi(token);
+            tokenNumber++;
+            data.erase(0, pos + delimiter.length());
+        }
     
-    std::ostringstream l;
-    l << pPos.x;
-    std::string y(l.str());
+        p = ofVec2f(a[0], a[1]);
     
-    std::ostringstream m;
-    m << pVel.x;
-    std::string velX(m.str());
+        ofVec2f pPos = player.getPos();
+        ofVec2f pVel = player.getVel();
     
-    std::ostringstream n;
-    n << pVel.y;
-    std::string velY(n.str());
+        std::ostringstream k;
+        k << pPos.x;
+        std::string x(k.str());
     
-    std::ostringstream o;
-    o << ID + 1;
-    std::string id(o.str());
+        std::ostringstream l;
+        l << pPos.x;
+        std::string y(l.str());
+    
+        std::ostringstream m;
+        m << pVel.x;
+        std::string velX(m.str());
+    
+        std::ostringstream n;
+        n << pVel.y;
+        std::string velY(n.str());
+    
+        std::ostringstream o;
+        o << ID + 1;
+        std::string id(o.str());
 
     
-    string send;
-    send = id + ": " + x + " " + y + " " + velX + " " + velY + " ";
+        string send;
+        send = id + ": " + x + " " + y + " " + velX + " " + velY + " ";
     
-    c.Send(send.c_str(), send.length());
+        c.Send(send.c_str(), send.length());
+    }
 }*/
