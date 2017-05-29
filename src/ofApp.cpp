@@ -8,6 +8,8 @@ void ofApp::setup()
 //    ID = 0;
     
 //    player = Player(ID);
+
+//    clientSetup();
     
     puck = Puck();
     
@@ -25,7 +27,11 @@ void ofApp::update()
     v.x = ofGetMouseX() - ofGetPreviousMouseX();
     v.y = ofGetMouseY() - ofGetPreviousMouseY();
     
-    player.setVel(v);*/
+    player.setVel(v);
+    
+    player.update();
+    
+    client();*/
     
     server();
     
@@ -55,6 +61,7 @@ void ofApp::draw()
     puck.display();
     
     /*player.display();
+    
     
     ofFill();
     ofSetColor(0, 255, 0);
@@ -136,8 +143,8 @@ void ofApp::background()
 void ofApp::serverSetup()
 {
     s.Create();
-    s.SetEnableBroadcast(true);
-    s.Connect("172.16.255.255", 12345);
+//    s.SetEnableBroadcast(true);
+    s.Connect("172.16.51.62", 12344);
     s.SetNonBlocking(true);
 }
 
@@ -145,22 +152,30 @@ void ofApp::server()
 {
     ofVec2f pPos = puck.getPos();
     
-    std::ostringstream puckPos;
-    puckPos << pPos;
-    std::string c(puckPos.str());
+    std::ostringstream puckPosX;
+    puckPosX << pPos.x;
+    std::string x(puckPosX.str());
+    
+    std::ostringstream puckPosY;
+    puckPosY << pPos.y;
+    std::string y(puckPosY.str());
+    
+    std::string puckPos = x + " " + y + " ";
 
-    s.Send(c.c_str(), c.length());
+    s.Send(puckPos.c_str(), puckPos.length());
     
     char received[100];
-    int x = s.Receive(received, 100);
+    int e = s.Receive(received, 100);
     
-    if(x != 0)
+    std::cout << e;
+    
+    if(e != 0)
     {
         string data(received);
     
-        string data1;
+        /*string data1;
         data1 = data.substr(data.find("1:"), data.find("2:"));
-        data.erase(data.find("1:") - 2, data.find("2:"));
+        data.erase(data.find("1:") - 2, data.find("2:"));*/
     
         string delimiter;
         delimiter = " ";
@@ -168,7 +183,19 @@ void ofApp::server()
         int pos[2];
         std::string token[2];
         int tokenNumber[2];
-        float a[2][4];
+        float movementInfo[2][4];
+        
+        for(int i = 0; i < 2; i++)
+        {
+            pos[i] = 0;
+            token[i] = "";
+            tokenNumber[i] = 0;
+            
+            for(int j = 0; j < 4; j++)
+            {
+                movementInfo[i][j] = 0;
+            }
+        }
     
         while ((pos[0] = data.find(delimiter)) != std::string::npos)
         {
@@ -176,46 +203,47 @@ void ofApp::server()
         
             if(token[0] != "1:" || token[0] != "2:")
             {
-                a[0][tokenNumber[0]] = std::stoi(token[0]);
+                movementInfo[0][tokenNumber[0]] = std::stoi(token[0]);
                 tokenNumber[0]++;
             }
         
             data.erase(0, pos[0] + delimiter.length());
         }
     
-        while ((pos[1] = data1.find(delimiter)) != std::string::npos)
+       /*while ((pos[1] = data1.find(delimiter)) != std::string::npos)
         {
             token[1] = data.substr(0, pos[1]);
         
             if(token[1] != "1:" || token[1] != "2:")
             {
-                a[1][tokenNumber[1]] = std::stoi(token[1]);
+                movementInfo[1][tokenNumber[1]] = std::stoi(token[1]);
                 tokenNumber[1]++;
             }
         
             data.erase(0, pos[1] + delimiter.length());
-        }
+        }*/
 
     
         ofVec2f attributes[4];
-        attributes[0] = ofVec2f(a[0][0], a[0][1]);
-        attributes[1] = ofVec2f(a[0][2], a[0][3]);
+        
+        attributes[0] = ofVec2f(movementInfo[0][0], movementInfo[0][2]);
+        attributes[1] = ofVec2f(movementInfo[0][2], movementInfo[0][3]);
+        
+        pl[0].setPos(attributes[0]);
+        pl[0].setVel(attributes[1]);
     
-        pl[1].setPos(attributes[0]);
-        pl[1].setVel(attributes[1]);
+        attributes[2] = ofVec2f(movementInfo[1][0], movementInfo[1][1]);
+        attributes[3] = ofVec2f(movementInfo[1][2], movementInfo[1][3]);
     
-        attributes[2] = ofVec2f(a[1][0], a[1][1]);
-        attributes[3] = ofVec2f(a[1][2], a[1][3]);
-    
-        pl[0].setPos(attributes[2]);
-        pl[0].setVel(attributes[3]);
+        pl[1].setPos(attributes[2]);
+        pl[1].setVel(attributes[3]);
     }
 }
 
 /*void ofApp::clientSetup()
 {
     c.Create();
-    c.Bind(9271);
+    c.Bind(12344);
     c.SetNonBlocking(true);
 }
 
@@ -233,45 +261,45 @@ void ofApp::client()
         int pos = 0;
         std::string token;
         int tokenNumber = 0;
-        float a[2];
+        float movementInfo[2];
     
         while ((pos = data.find(delimiter)) != std::string::npos)
         {
             token = data.substr(0, pos);
-            a[tokenNumber] = std::stoi(token);
+            movementInfo[tokenNumber] = std::stoi(token);
             tokenNumber++;
             data.erase(0, pos + delimiter.length());
         }
     
-        p = ofVec2f(a[0], a[1]);
+        p = ofVec2f(movementInfo[0], movementInfo[1]);
+    }
     
-        ofVec2f pPos = player.getPos();
-        ofVec2f pVel = player.getVel();
+    ofVec2f pPos = player.getPos();
+    ofVec2f pVel = player.getVel();
     
-        std::ostringstream k;
-        k << pPos.x;
-        std::string x(k.str());
+    std::ostringstream k;
+    k << pPos.x;
+    std::string x(k.str());
     
-        std::ostringstream l;
-        l << pPos.x;
-        std::string y(l.str());
+    std::ostringstream l;
+    l << pPos.y;
+    std::string y(l.str());
     
-        std::ostringstream m;
-        m << pVel.x;
-        std::string velX(m.str());
+    std::ostringstream m;
+    m << pVel.x;
+    std::string velX(m.str());
     
-        std::ostringstream n;
-        n << pVel.y;
-        std::string velY(n.str());
+    std::ostringstream n;
+    n << pVel.y;
+    std::string velY(n.str());
     
-        std::ostringstream o;
-        o << ID + 1;
-        std::string id(o.str());
+    std::ostringstream o;
+    o << ID + 1;
+    std::string id(o.str());
 
     
-        string send;
-        send = id + ": " + x + " " + y + " " + velX + " " + velY + " ";
+    string send;
+    send = id + ": " + x + " " + y + " " + velX + " " + velY + " ";
     
-        c.Send(send.c_str(), send.length());
-    }
+    c.Send(send.c_str(), send.length());
 }*/
